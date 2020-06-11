@@ -1,35 +1,15 @@
 from typing import List, Dict
-
 import os
-import glob
-import re
 import json
 import argparse
-
+import sys
 from string import Template
+
+from common import get_files, get_links_from_file, get_id_files_dict, get_id_title_dict
+
 
 FORCE_GRAPH_TEMPLATE_NAME = "force_graph.html"
 OUTPUT_FILE_NAME = "output.html"
-
-
-def get_files(folder: str) -> List:
-    return [os.path.basename(file) for file in glob.glob("{}/*.md".format(folder))]
-
-
-def get_id_files_dict(files: List) -> Dict:
-    return {item[:12]: item for item in files}
-
-
-def get_id_title_dict(files: List) -> Dict:
-    return {item[:12]: item[:-3] for item in files}
-
-
-def get_links_from_file(file: str, dirname: str = "") -> List:
-    file_path = "{}/{}".format(dirname, file) if dirname else file
-    with open(file_path, "r") as f:
-        lines = f.read()
-        links = re.findall(r"\[\[(\d{12})\]\]", lines)
-    return links
 
 
 def generate_force_graph(id_files_dict: Dict, id_title_dict: Dict, dirname: str = "", highlight: List = None) -> None:
@@ -71,7 +51,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "directory", help="Source Directory (Default to current directory)"
     )
-    parser.add_argument("--highlight", help="Starts from current zettel ID")
+    parser.add_argument("--highlight", nargs='*', help="Highlight zettel ID")
     args = parser.parse_args()
 
     dirname = args.directory
@@ -94,4 +74,7 @@ if __name__ == "__main__":
         exit(1)
 
     highlight = args.highlight if args.highlight else []
+    if not highlight:
+        highlight = [line.strip() for line in sys.stdin]
+
     generate_force_graph(id_files_dict, id_title_dict, dirname, highlight=highlight)
