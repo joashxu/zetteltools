@@ -73,8 +73,10 @@ if __name__ == "__main__":
         print("No valid Zettel was found.")
         exit(1)
 
-    highlight = args.highlight if args.highlight else []
-    if not highlight:
-        highlight = [line.strip() for line in sys.stdin]
+    highlight = []
+    if args.highlight is not None:
+        highlight = args.highlight if args.highlight else []
+        if not highlight:
+            highlight = [line.strip() for line in sys.stdin]
 
     generate_force_graph(id_files_dict, id_title_dict, dirname, highlight=highlight)
