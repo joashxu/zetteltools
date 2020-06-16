@@ -11,7 +11,6 @@
     let height = 1080;
     let width = 1440;
 
-    const scale = d3.scaleOrdinal(d3.schemeCategory10);
     const links = data.links.map(d => Object.create(d));
     const nodes = data.nodes.map(d => Object.create(d));
 
@@ -39,7 +38,7 @@
         .data(nodes)
         .join("circle")
         .attr("r", 5)
-        .attr("fill", d => scale(d.group))
+        .attr("fill", d => (d.group == 1) ? "#1f77b4" : "#ff7f0e")
         .call(drag(simulation))
         .on("mouseover", fade(.1))
         .on("mouseout", fade(1));
